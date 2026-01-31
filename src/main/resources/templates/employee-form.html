@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${pageTitle}">Employee Form</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" 
+          rel="stylesheet">
+    <link rel="stylesheet" 
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .form-container {
+            margin-top: 50px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        .form-header {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .error-message {
+            color: #dc3545;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+        .form-control.is-invalid {
+            border-color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-container">
+            <div class="form-header">
+                <h2 th:text="${pageTitle}">Employee Form</h2>
+                <p class="text-muted">Please fill in all required fields</p>
+            </div>
+            
+            <!-- Display general error message (like duplicate email) -->
+            <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" 
+                 role="alert">
+                <i class="fas fa-exclamation-circle"></i> <span th:text="${errorMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            
+            <form th:action="@{/employees/save}" th:object="${employee}" method="post">
+                <!-- Hidden ID field for editing -->
+                <input type="hidden" th:field="*{id}">
+                
+                <!-- Name -->
+                <div class="mb-3">
+                    <label for="name" class="form-label">
+                        Full Name <span class="text-danger">*</span>
+                    </label>
+                    <input type="text" 
+                           class="form-control" 
+                           th:field="*{name}"
+                           th:classappend="${#fields.hasErrors('name')} ? 'is-invalid' : ''"
+                           id="name" 
+                           placeholder="Enter employee name">
+                    <div class="error-message" th:if="${#fields.hasErrors('name')}" 
+                         th:errors="*{name}"></div>
+                </div>
+
+                <!-- Age -->
+                <div class="mb-3">
+                    <label for="age" class="form-label">
+                        Age <span class="text-danger">*</span>
+                    </label>
+                    <input type="number" 
+                        class="form-control" 
+                        th:field="*{age}"
+                        th:classappend="${#fields.hasErrors('age')} ? 'is-invalid' : ''"
+                        id="age" 
+                        placeholder="Enter age (18-70)"
+                        min="18"
+                        max="70">
+                    <div class="error-message" th:if="${#fields.hasErrors('age')}" 
+                        th:errors="*{age}"></div>
+                </div>
+                
+                <!-- Email -->
+                <div class="mb-3">
+                    <label for="email" class="form-label">
+                        Email Address <span class="text-danger">*</span>
+                    </label>
+                    <input type="email" 
+                           class="form-control" 
+                           th:field="*{email}"
+                           th:classappend="${#fields.hasErrors('email')} ? 'is-invalid' : ''"
+                           id="email" 
+                           placeholder="example@company.com">
+                    <div class="error-message" th:if="${#fields.hasErrors('email')}" 
+                         th:errors="*{email}"></div>
+                </div>
+                
+                <!-- Phone -->
+                <div class="mb-3">
+                    <label for="phone" class="form-label">
+                        Phone Number <span class="text-danger">*</span>
+                    </label>
+                    <input type="text" 
+                           class="form-control" 
+                           th:field="*{phone}"
+                           th:classappend="${#fields.hasErrors('phone')} ? 'is-invalid' : ''"
+                           id="phone" 
+                           placeholder="0123456789">
+                    <div class="error-message" th:if="${#fields.hasErrors('phone')}" 
+                         th:errors="*{phone}"></div>
+                </div>
+                
+                <!-- Department and Position Row -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="department" class="form-label">
+                                Department <span class="text-danger">*</span>
+                            </label>
+                            <select class="form-select" 
+                                    th:field="*{department}"
+                                    th:classappend="${#fields.hasErrors('department')} ? 'is-invalid' : ''"
+                                    id="department">
+                                <option value="">Select Department</option>
+                                <option value="IT">IT</option>
+                                <option value="HR">HR</option>
+                                <option value="Finance">Finance</option>
+                                <option value="Marketing">Marketing</option>
+                                <option value="Sales">Sales</option>
+                                <option value="Operations">Operations</option>
+                            </select>
+                            <div class="error-message" th:if="${#fields.hasErrors('department')}" 
+                                 th:errors="*{department}"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="position" class="form-label">
+                                Position <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" 
+                                   class="form-control" 
+                                   th:field="*{position}"
+                                   th:classappend="${#fields.hasErrors('position')} ? 'is-invalid' : ''"
+                                   id="position" 
+                                   placeholder="e.g., Manager, Developer">
+                            <div class="error-message" th:if="${#fields.hasErrors('position')}" 
+                                 th:errors="*{position}"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Salary and Hire Date Row -->
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="salary" class="form-label">
+                                Monthly Salary ($) <span class="text-danger">*</span>
+                            </label>
+                            <input type="number" 
+                                   step="0.01"
+                                   class="form-control" 
+                                   th:field="*{salary}"
+                                   th:classappend="${#fields.hasErrors('salary')} ? 'is-invalid' : ''"
+                                   id="salary" 
+                                   placeholder="5000.00">
+                            <div class="error-message" th:if="${#fields.hasErrors('salary')}" 
+                                 th:errors="*{salary}"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label for="hireDate" class="form-label">
+                                Hire Date <span class="text-danger">*</span>
+                            </label>
+                            <input type="date" 
+                                   class="form-control" 
+                                   th:field="*{hireDate}"
+                                   th:classappend="${#fields.hasErrors('hireDate')} ? 'is-invalid' : ''"
+                                   id="hireDate">
+                            <div class="error-message" th:if="${#fields.hasErrors('hireDate')}" 
+                                 th:errors="*{hireDate}"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Buttons -->
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+                    <a th:href="@{/employees}" class="btn btn-secondary me-md-2">
+                        <i class="fas fa-times"></i> Cancel
+                    </a>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i> Save Employee
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+</body>
+</html>

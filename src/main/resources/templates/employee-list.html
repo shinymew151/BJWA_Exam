@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" 
+          rel="stylesheet">
+    <link rel="stylesheet" 
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .main-container {
+            margin-top: 30px;
+        }
+        .table-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        .page-header {
+            margin-bottom: 30px;
+            color: #333;
+        }
+        .btn-action {
+            margin: 0 2px;
+        }
+        .search-box {
+            margin-bottom: 20px;
+        }
+        .alert {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container main-container">
+        <div class="table-container">
+            <div class="page-header">
+                <h1><i class="fas fa-users"></i> Employee Management System</h1>
+                <p class="text-muted">Manage your employee salary information</p>
+            </div>
+            
+            <!-- Alert Messages -->
+            <div th:if="${successMessage}" class="alert alert-success alert-dismissible fade show" 
+                 role="alert">
+                <i class="fas fa-check-circle"></i> <span th:text="${successMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            
+            <div th:if="${errorMessage}" class="alert alert-danger alert-dismissible fade show" 
+                 role="alert">
+                <i class="fas fa-exclamation-circle"></i> <span th:text="${errorMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            
+            <!-- Search and Add Button -->
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <form th:action="@{/employees/search}" method="get" class="d-flex">
+                        <input type="text" name="keyword" th:value="${keyword}" 
+                               class="form-control me-2" 
+                               placeholder="Search by name, department, or position...">
+                        <button type="submit" class="btn btn-primary me-2">
+                            <i class="fas fa-search"></i> Search
+                        </button>
+                        <a th:href="@{/employees}" class="btn btn-secondary">
+                            <i class="fas fa-redo"></i> Reset
+                        </a>
+                    </form>
+                </div>
+                <div class="col-md-4 text-end">
+                    <a th:href="@{/employees/new}" class="btn btn-success">
+                        <i class="fas fa-plus"></i> Add New Employee
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Employee Table -->
+            <div class="table-responsive">
+                <table class="table table-hover table-striped">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Age</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Department</th>
+                            <th>Position</th>
+                            <th>Salary ($)</th>
+                            <th>Hire Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:if="${employees.isEmpty()}">
+                            <td colspan="10" class="text-center text-muted">
+                                <i class="fas fa-inbox fa-3x mb-3"></i>
+                                <p>No employees found</p>
+                            </td>
+                        </tr>
+                        <tr th:each="employee : ${employees}">
+                            <td th:text="${employee.id}"></td>
+                            <td th:text="${employee.name}"></td>
+                            <td th:text="${employee.age}"></td> 
+                            <td th:text="${employee.email}"></td>
+                            <td th:text="${employee.phone}"></td>
+                            <td><span class="badge bg-info" th:text="${employee.department}"></span></td>
+                            <td><span class="badge bg-secondary" th:text="${employee.position}"></span></td>
+                            <td th:text="${#numbers.formatDecimal(employee.salary, 1, 'COMMA', 2, 'POINT')}"></td>
+                            <td th:text="${#temporals.format(employee.hireDate, 'dd/MM/yyyy')}"></td>
+                            <td>
+                                <a th:href="@{/employees/edit/{id}(id=${employee.id})}" 
+                                   class="btn btn-sm btn-warning btn-action">
+                                    <i class="fas fa-edit"></i> Edit
+                                </a>
+                                <a th:href="@{/employees/delete/{id}(id=${employee.id})}" 
+                                   class="btn btn-sm btn-danger btn-action"
+                                   onclick="return confirm('Are you sure you want to delete this employee?');">
+                                    <i class="fas fa-trash"></i> Delete
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="text-muted mt-3">
+                Total Employees: <strong th:text="${employees.size()}"></strong>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+</body>
+</html>
